@@ -1,46 +1,71 @@
 import "./App.css";
 
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+
+type FormData = {
+  name: string;
+  date: string;
+  subject: string;
+  description: string;
+};
 
 export default function App() {
-  const [name, setName] = useState("");
+  const { control, handleSubmit } = useForm<FormData>({
+    defaultValues: { name: "", date: "", subject: "", description: "" },
+  });
 
-  function onSubmit(e: React.FormEvent<HTMLElement>) {
-    e.preventDefault();
-    setName("");
+  function onSubmit(data: FormData) {
+    console.log(data);
   }
 
   return (
     <div>
       <h1>Evento</h1>
 
-      <form onSubmit={onSubmit}>
-        <input
-          type="text"
-          placeholder="Nome do evento"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field }) => (
+            <input type="text" placeholder="Nome do evento" {...field} />
+          )}
         />
+
         <span className="error">Nome é obrigatório</span>
 
-        <input type="date" placeholder="Nome do evento" lang="pt-BR" />
+        <Controller
+          control={control}
+          name="date"
+          render={({ field }) => (
+            <input type="date" placeholder="Nome do evento" {...field} />
+          )}
+        />
 
-        <select defaultValue="">
-          <option value="" disabled>
-            Selecione...
-          </option>
+        <Controller
+          control={control}
+          name="subject"
+          render={({ field }) => (
+            <select {...field}>
+              <option value="" disabled>
+                Selecione...
+              </option>
 
-          <option value="technology">React</option>
-          <option value="entertainment">Node.js</option>
-          <option value="business">Javascript</option>
-          <option value="business">Typescript</option>
-        </select>
+              <option value="React">React</option>
+              <option value="Node.js">Node.js</option>
+              <option value="Javascript">Javascript</option>
+              <option value="Typescript">Typescript</option>
+            </select>
+          )}
+        />
+        <Controller
+          control={control}
+          name="description"
+          render={({ field }) => (
+            <textarea placeholder="Descrição" rows={4} {...field} />
+          )}
+        />
 
-        <textarea placeholder="Descrição" rows={4} />
-
-        <button type="submit">
-          Salvar
-        </button>
+        <button type="submit">Salvar</button>
       </form>
     </div>
   );
